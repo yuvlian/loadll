@@ -5,7 +5,7 @@
 #include <string.h>
 #include <errno.h>
 
-#define CONFIG_FILE "config.ini"
+#define CONFIG_FILE "loadll.ini"
 
 typedef struct {
     char exePath[MAX_PATH];
@@ -71,7 +71,7 @@ bool load_config(Config* cfg) {
         if (!create_default_config()) {
             printf("Default config file creation failed.\n");
         } else {
-            printf("Config file created. Please edit %s.\n", CONFIG_FILE);
+            printf("Config file created. Please edit %s and rerun.\n", CONFIG_FILE);
         }
         return false;
     }
@@ -85,7 +85,8 @@ bool load_config(Config* cfg) {
     char line[1024];
     while (fgets(line, sizeof(line), f)) {
         line[strcspn(line, "\r\n")] = 0;
-
+        if (line[0] == '#' || line[0] == 0)
+            continue;
         if (strncmp(line, "exePath=", 8) == 0)
             sscanf(line + 8, "%[^\n]", cfg->exePath);
         else if (strncmp(line, "dllPath=", 8) == 0)
